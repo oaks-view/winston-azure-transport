@@ -8,6 +8,10 @@ including log rollover and expiry in an easy to configure manner.
 
 This borrows heavily from an original coffeescript version by [Parsimotion][2], however it only requires a container SAS and works with winston 3.
 
+## Credit
+NOTE: This is a fork of https://github.com/blushingpenguin/winston-azure-transport, 100% of the code in this repository was written by user blushingpenguin on github.
+    This fork simply fixes an intialization error I encountered while trying to use the library.
+
 ## Installation
 
 ``` bash

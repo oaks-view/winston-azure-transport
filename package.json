@@ -1,7 +1,7 @@
 {
-  "name": "winston-azure-transport",
+  "name": "mozenge-winston-azure-transport",
   "description": "A winston transport for azure blobs",
-  "version": "3.0.4",
+  "version": "1.0.0",
   "private": false,
   "dependencies": {
     "async": "^2.6.1",
@@ -48,7 +48,7 @@
   },
   "peerDependencies": {},
   "license": "MIT",
-  "author": "Mark Weaver <mark@blushingpenguin.com>",
+  "author": "Moses Igbuku <captainoak@gmail.com>",
   "keywords": [
     "winston",
     "transport",
@@ -56,11 +56,11 @@
     "azure"
   ],
   "bugs": {
-    "url": "https://github.com/blushingpenguin/winston-azure-transport/issues"
+    "url": "https://github.com/oaks-view/winston-azure-transport/issues"
   },
-  "homepage": "https://github.com/blushingpenguin/winston-azure-transport#readme",
+  "homepage": "https://github.com/oaks-view/winston-azure-transport#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blushingpenguin/winston-azure-blob-transport.git"
+    "url": "git+https://github.com/oaks-view/winston-azure-transport.git"
   }
 }
