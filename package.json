@@ -1,7 +1,7 @@
 {
   "name": "mozenge-winston-azure-transport",
   "description": "A winston transport for azure blobs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "dependencies": {
     "async": "^2.6.1",
