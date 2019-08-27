@@ -9,8 +9,8 @@ including log rollover and expiry in an easy to configure manner.
 This borrows heavily from an original coffeescript version by [Parsimotion][2], however it only requires a container SAS and works with winston 3.
 
 ## Credit
-NOTE: This is a fork of https://github.com/blushingpenguin/winston-azure-transport, 100% of the code in this repository was written by user blushingpenguin on github.
-    This fork simply fixes an intialization error I encountered while trying to use the library.
+NOTE: This is a fork of https://github.com/blushingpenguin/winston-azure-transport, 99.99% of the code in this repository was written by user blushingpenguin on github.
+    This fork simply fixes an intialization error I encountered while trying to use the library and adds an extra optional config parameter `onAzureStorageErrorCallback`, which is meant to be a callback that will receive and handle `Azure Storage` errors(See the `General usage` section below for usage example).
 
 ## Installation
 
@@ -100,7 +100,15 @@ const logger = winston.createLogger({
         new AzureBlobTransport({
             containerUrl: "https://mystorage.blob.core.windows.net/errors?sv=2018-03-28&sr=c&sig=x&st=2019-01-01T00:00:00Z&se=2219-01-01T00:00:00Z&sp=rwdl",
             nameFormat: "my-app-logs/{yyyy}/{MM}/{dd}/{hh}/node.log",
-            retention: 365
+            retention: 365,
+            onAzureStorageError: (err, block) => { // this is optional
+                console.log('RECEIVED ERROR object');
+                console.log(err);
+                if (block) {
+                    console.log('received block string as well');
+                    console.log(block);
+                }
+            },
         })
     ]
 });

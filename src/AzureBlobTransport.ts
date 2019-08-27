@@ -12,6 +12,11 @@ export interface IAzureBlobTransportOptions extends TransportStream.TransportStr
     nameFormat?: string
     retention?: number
     trace?: boolean
+    onAzureStorageError?: AzureStorageErrorCallack
+}
+
+interface AzureStorageErrorCallack {
+    (error: azure.StorageError, block?: string): void;
 }
 
 interface ICleanState {
@@ -31,6 +36,7 @@ export class AzureBlobTransport extends TransportStream {
     private nameFormat: string
     private retention?: number
     private blobService: azure.BlobService
+    private onAzureStorageErrorCallback: AzureStorageErrorCallack;
 
     constructor(opts: IAzureBlobTransportOptions) {
         super(opts);
@@ -44,7 +50,11 @@ export class AzureBlobTransport extends TransportStream {
         this.buildCargo();
         this.createSas(opts.containerUrl);
         this.nameFormat = opts.nameFormat || DEFAULT_NAME_FORMAT,
-        this.retention = opts.retention;
+            this.retention = opts.retention;
+
+        if (opts.onAzureStorageError) {
+            this.onAzureStorageErrorCallback = opts.onAzureStorageError;
+        }
 
         if (this.retention) {
             setTimeout(this.cleanOldLogs, 1);
@@ -122,7 +132,7 @@ export class AzureBlobTransport extends TransportStream {
         let ok = true;
 
         while (namePos < name.length &&
-               formatPos < this.nameFormat.length) {
+            formatPos < this.nameFormat.length) {
 
             let formatChar = this.nameFormat.charAt(formatPos++);
             if (formatChar !== '{') {
@@ -190,6 +200,9 @@ export class AzureBlobTransport extends TransportStream {
     ) {
         if (error) {
             console.error(`listing storage blobs failed with ${JSON.stringify(error, null, 2)}`);
+            if (this.onAzureStorageErrorCallback) {
+                this.onAzureStorageErrorCallback(error);
+            }
             return;
         }
 
@@ -218,7 +231,7 @@ export class AzureBlobTransport extends TransportStream {
     private listBlobs(state: ICleanState, token: azure.common.ContinuationToken | null) {
         this.blobService.listBlobsSegmentedWithPrefix(this.containerName, state.prefix, token!,
             (err: StorageError, res: azure.BlobService.ListBlobDirectoriesResult,
-             resp: ServiceResponse) =>
+                resp: ServiceResponse) =>
                 this.listBlobsCallback(state, err, res, resp));
     }
 
@@ -261,7 +274,7 @@ export class AzureBlobTransport extends TransportStream {
         this.listBlobs({ now, prefix, entries: [] }, null);
 
         setTimeout(this.cleanOldLogs, this.nextClean - now);
-        this.debug(`next clean at ${new Date(this.nextClean)}, `+
+        this.debug(`next clean at ${new Date(this.nextClean)}, ` +
             `retention is ${this.retention} day${this.retention! > 1 ? "s" : ""}`);
     }
 
@@ -269,7 +282,10 @@ export class AzureBlobTransport extends TransportStream {
         if (err) {
             console.error(`BlobService.createAppendBlobFromText(` +
                 `${this.containerName}/${blobName}) failed with = ` +
-                `${JSON.stringify(err,null,2)}`);
+                `${JSON.stringify(err, null, 2)}`);
+            if (this.onAzureStorageErrorCallback) {
+                this.onAzureStorageErrorCallback(err);
+            }
         }
         blockDone();
     }
@@ -294,7 +310,10 @@ export class AzureBlobTransport extends TransportStream {
             }
             console.error(`BlobService.appendBlockFromText(` +
                 `${this.containerName}/${blobName}) failed with ` +
-                `error = ${JSON.stringify(err,null,2)}`);
+                `error = ${JSON.stringify(err, null, 2)}`);
+            if (this.onAzureStorageErrorCallback) {
+                this.onAzureStorageErrorCallback(err, block);
+            }
         }
         blockDone();
     }
