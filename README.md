@@ -16,7 +16,7 @@ NOTE: This is a fork of https://github.com/blushingpenguin/winston-azure-transpo
 
 ``` bash
   $ npm install winston
-  $ npm install winston-azure-transport
+  $ npm install mozenge-winston-azure-transport
 ```
 
 ## Usage from iisnode
@@ -61,7 +61,7 @@ You can also easily combine this with [express][4] using [express-winston][3]:
 import express from "express";
 import expressWinston from "express-winston";
 import winston from "winston";
-import { AzureBlobTransport, IAzureBlobTransportOptions } from "winston-azure-transport";
+import { AzureBlobTransport, IAzureBlobTransportOptions } from "mozenge-winston-azure-transport";
 
 const app = express();
 
@@ -93,7 +93,7 @@ For general usage ``AzureBlobTransport`` can be directly created with options pa
 
 ``` js
 import winston from "winston";
-import { AzureBlobTransport } from "winston-azure-transport";
+import { AzureBlobTransport } from "mozenge-winston-azure-transport";
 
 const logger = winston.createLogger({
     transports: [
